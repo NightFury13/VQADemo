@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html>
+    <head>
+        <title>Rango</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="{% static "js/rango-ajax.js" %}"></script>
+        <script src="{% static "js/jquery.js" %}"></script>
+    </head>
+
+    <body>
+        {% if category %}
+        <h1>{{ category_name }}</h1>
+        <p>
+            <strong id="like_count">{{ category.likes }}</strong> people like this category
+            <button id="likes" data-catid="{{category.id}}" class="btn btn-primary" type="button">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            Like
+            </button>
+            <script>
+                $('#likes').click(function(){
+                    var catid;
+                    catid = $(this).attr("data-catid");
+                    $.get('/rango/like_category/', {category_id: catid}, function(data){
+                               $('#like_count').html(data);
+                               $('#likes').hide();
+                    });
+                });
+            </script>
+        </p>
+
+            <a href="/rango/add_page/{{ category_name }}">Add a New Page</a><br />
+
+            {% if pages %}
+            <ul>
+                {% for page in pages %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>No pages currently in category.</strong>
+            {% endif %}
+        {% else %}
+            The specified category {{ category_name }} does not exist!
+        {% endif %}
+    </body>
+</html>
